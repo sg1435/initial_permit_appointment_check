@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Dec 23 15:01:21 2021
+
+@author: serhat
+"""
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import pandas as pd
+from datetime import date
+
+s=Service('/usr/local/bin/chromedriver')
+driver = webdriver.Chrome(service=s)
+driver.get('https://telegov.njportal.com/njmvc/AppointmentWizard/15')
+tarihler = []
+listeler = [i.text for i in driver.find_elements(By.XPATH,"//*[contains(@id, 'dateText')]")]
+for i in listeler:
+    if i == 'No Appointments Available':
+        pass
+    else:
+        tarihler.append((pd.to_datetime(i.split(' ')[4], format='%m/%d/%Y') - pd.to_datetime(date.today(), format='%Y/%m/%d')).days)
+driver.quit()
+'''
+root = tkinter.Tk()
+root.withdraw()
+messagebox.showinfo("EN AZ GUN", min(tarihler))
+'''
+gun_var = str(min(tarihler))
+
+
+import smtplib
+
+gmail_user = 'example@email.com'
+gmail_password = 'password'
+
+sent_from = gmail_user
+to = ['serhatguven016@gmail.com']
+subject = 'NJ Driver Licence Nearest Appointment'
+body = gun_var + ' days to nearest appointment'
+
+email_text = """\
+From: %s
+To: %s
+Subject: %s
+
+%s
+""" % (sent_from, ", ".join(to), subject, body)
+
+try:
+    smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    smtp_server.ehlo()
+    smtp_server.login(gmail_user, gmail_password)
+    smtp_server.sendmail(sent_from, to, email_text)
+    smtp_server.close()
+    print ("Email sent successfully!")
+except Exception as ex:
+    print ("Something went wrong….",ex)
