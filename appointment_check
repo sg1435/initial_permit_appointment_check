@@ -37,7 +37,7 @@ gmail_user = 'example@email.com'
 gmail_password = 'password'
 
 sent_from = gmail_user
-to = ['serhatguven016@gmail.com']
+to = ['emails to send']
 subject = 'NJ Driver Licence Nearest Appointment'
 body = gun_var + ' days to nearest appointment'
 
